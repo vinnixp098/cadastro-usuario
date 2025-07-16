@@ -27,10 +27,12 @@ public class UsuarioService {
         );
     }
 
-    public Usuario buscarUsuarioPorCpf(String cpf){
-        return repository.findByCpf(cpf).orElseThrow(
-                () -> new RuntimeException("Usuário nao encontrado")
-        );
+//    public Optional<Usuario> existeEmail(String email){
+//        return repository.findByEmailExist(email);
+//    }
+
+    public Optional<Usuario> buscarUsuarioPorCpf(String cpf){
+        return repository.findByCpf(cpf);
     }
 
     public List<Usuario> buscarUsuarios(){

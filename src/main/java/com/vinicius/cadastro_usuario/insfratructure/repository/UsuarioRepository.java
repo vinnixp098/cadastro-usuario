@@ -10,6 +10,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     Optional<Usuario> findByEmail(String email);
 
+//    Optional<Usuario> findByEmailExist(String email);
+
     Optional<Usuario> findByCpf(String cpf);
 
     @Transactional

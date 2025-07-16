@@ -2,6 +2,7 @@ package com.vinicius.cadastro_usuario.controller;
 
 import com.vinicius.cadastro_usuario.busines.UsuarioService;
 import com.vinicius.cadastro_usuario.insfratructure.entitys.Usuario;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +19,13 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @PostMapping("/cadastrar-usuario")
-    public ResponseEntity<String> salvarUsuario(@RequestBody Usuario usuario){
+    public ResponseEntity<String> salvarUsuario(@Valid @RequestBody Usuario usuario){
 
-        Optional<Usuario> exiteComEsseEmail = Optional.ofNullable(usuarioService.buscarUsuarioPorEmail(usuario.getEmail()));
+        Optional<Usuario> exiteComEsseEmail = usuarioService.buscarUsuarioPorCpf(usuario.getCpf());
 
         if(exiteComEsseEmail.isPresent()){
-            return new ResponseEntity<>("Email já cadastrado! Utilize outro email.", HttpStatus.BAD_REQUEST);
-//            return (ResponseEntity<String>) ResponseEntity.badRequest();
+            return new ResponseEntity<>("CPF já cadastrado! Utilize outro CPF.", HttpStatus.BAD_REQUEST);
         }
-
         usuarioService.salvarUsuario(usuario);
         return new ResponseEntity<>("Usuário cadastrado com sucesso!", HttpStatus.CREATED);
     }
@@ -43,10 +42,10 @@ public class UsuarioController {
 
     @GetMapping("/buscar-usuario-cpf")
     public ResponseEntity<?> buscarUsuarioPorCpf(@RequestParam String cpf){
-        Optional<Usuario> exiteEsseEmail = Optional.ofNullable(usuarioService.buscarUsuarioPorCpf(cpf));
+        Optional<Optional<Usuario>> exiteEsseEmail = Optional.ofNullable(usuarioService.buscarUsuarioPorCpf(cpf));
 
         if(exiteEsseEmail.isEmpty()){
-            return new ResponseEntity<>("Usuário não encontrato! Utilize outro email.", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Usuário não encontrato! Utilize outro CPF.", HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(usuarioService.buscarUsuarioPorCpf(cpf));
     }
