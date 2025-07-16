@@ -19,6 +19,9 @@ public class Usuario {
     @Column(name = "email", unique = true)
     private String email;
 
+    @Column(name = "cpf", unique = true)
+    private String cpf;
+
     @Column(name = "nome")
     private String nome;
 

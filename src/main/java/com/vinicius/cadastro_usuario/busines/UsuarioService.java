@@ -4,6 +4,9 @@ import com.vinicius.cadastro_usuario.insfratructure.entitys.Usuario;
 import com.vinicius.cadastro_usuario.insfratructure.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 
 public class UsuarioService {
@@ -20,8 +23,18 @@ public class UsuarioService {
 
     public Usuario buscarUsuarioPorEmail(String email){
         return repository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("Email nao encontrado")
+                () -> new RuntimeException("Usuário nao encontrado")
         );
+    }
+
+    public Usuario buscarUsuarioPorCpf(String cpf){
+        return repository.findByCpf(cpf).orElseThrow(
+                () -> new RuntimeException("Usuário nao encontrado")
+        );
+    }
+
+    public List<Usuario> buscarUsuarios(){
+        return repository.findAll();
     }
 
     public void deletarPorEmail(String email){
