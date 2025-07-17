@@ -1,6 +1,7 @@
 package com.vinicius.cadastro_usuario.controller;
 
-import com.vinicius.cadastro_usuario.busines.UsuarioService;
+import com.vinicius.cadastro_usuario.busines.dto.UsuarioDTO;
+import com.vinicius.cadastro_usuario.busines.service.UsuarioService;
 import com.vinicius.cadastro_usuario.insfratructure.entitys.Usuario;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,34 +21,33 @@ public class UsuarioController {
 
     @PostMapping("/cadastrar-usuario")
     public ResponseEntity<String> salvarUsuario(@Valid @RequestBody Usuario usuario){
-
-        Optional<Usuario> exiteComEsseEmail = usuarioService.buscarUsuarioPorCpf(usuario.getCpf());
-
-        if(exiteComEsseEmail.isPresent()){
-            return new ResponseEntity<>("CPF já cadastrado! Utilize outro CPF.", HttpStatus.BAD_REQUEST);
+        Boolean deuCerto = usuarioService.salvarUsuario(usuario);
+        if(deuCerto){
+            return new ResponseEntity<>("Usuário cadastrado com sucesso!", HttpStatus.CREATED);
         }
-        usuarioService.salvarUsuario(usuario);
-        return new ResponseEntity<>("Usuário cadastrado com sucesso!", HttpStatus.CREATED);
+        return new ResponseEntity<>("Erro ao cadastrar usuário", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/buscar-usuario-email")
     public ResponseEntity<?> buscarUsuarioPorEmail(@RequestParam String email){
-        Optional<Usuario> exiteEsseEmail = Optional.ofNullable(usuarioService.buscarUsuarioPorEmail(email));
+        Optional<UsuarioDTO> exiteEsseEmail = usuarioService.buscarUsuarioPorEmail(email);
 
-        if(exiteEsseEmail.isEmpty()){
-            return new ResponseEntity<>("Usuário não encontrato! Utilize outro email.", HttpStatus.NOT_FOUND);
+        if(exiteEsseEmail.isPresent()){
+            return ResponseEntity.ok(usuarioService.buscarUsuarioPorEmail(email));
+
         }
-        return ResponseEntity.ok(usuarioService.buscarUsuarioPorEmail(email));
+        return new ResponseEntity<>("Usuário não encontrato! Utilize outro email.", HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/buscar-usuario-cpf")
-    public ResponseEntity<?> buscarUsuarioPorCpf(@RequestParam String cpf){
-        Optional<Optional<Usuario>> exiteEsseEmail = Optional.ofNullable(usuarioService.buscarUsuarioPorCpf(cpf));
+    public ResponseEntity<UsuarioDTO> buscarUsuarioPorCpf(@RequestParam String cpf){
+        Optional<UsuarioDTO> usuarioDTOOptional = usuarioService.buscarUsuarioPorCpf(cpf);
 
-        if(exiteEsseEmail.isEmpty()){
-            return new ResponseEntity<>("Usuário não encontrato! Utilize outro CPF.", HttpStatus.NOT_FOUND);
+        if (usuarioDTOOptional.isPresent()) {
+            return ResponseEntity.ok(usuarioDTOOptional.get());
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(usuarioService.buscarUsuarioPorCpf(cpf));
     }
 
     @GetMapping("/buscar-usuarios")

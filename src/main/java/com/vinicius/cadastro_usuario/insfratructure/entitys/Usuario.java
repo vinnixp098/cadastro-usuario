@@ -2,7 +2,6 @@ package com.vinicius.cadastro_usuario.insfratructure.entitys;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
