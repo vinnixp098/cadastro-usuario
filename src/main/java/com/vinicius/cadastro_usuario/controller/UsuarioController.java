@@ -20,12 +20,8 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @PostMapping("/cadastrar-usuario")
-    public ResponseEntity<String> salvarUsuario(@Valid @RequestBody Usuario usuario){
-        Boolean deuCerto = usuarioService.salvarUsuario(usuario);
-        if(deuCerto){
-            return new ResponseEntity<>("Usuário cadastrado com sucesso!", HttpStatus.CREATED);
-        }
-        return new ResponseEntity<>("Erro ao cadastrar usuário", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> salvarUsuario(@Valid @RequestBody Usuario usuario){
+        return usuarioService.salvarUsuario(usuario);
     }
 
     @GetMapping("/buscar-usuario-email")
@@ -41,7 +37,7 @@ public class UsuarioController {
 
     @GetMapping("/buscar-usuario-cpf")
     public ResponseEntity<UsuarioDTO> buscarUsuarioPorCpf(@RequestParam String cpf){
-        Optional<UsuarioDTO> usuarioDTOOptional = usuarioService.buscarUsuarioPorCpf(cpf);
+        Optional<UsuarioDTO> usuarioDTOOptional = (Optional<UsuarioDTO>) usuarioService.buscarUsuarioPorCpf(cpf);
 
         if (usuarioDTOOptional.isPresent()) {
             return ResponseEntity.ok(usuarioDTOOptional.get());

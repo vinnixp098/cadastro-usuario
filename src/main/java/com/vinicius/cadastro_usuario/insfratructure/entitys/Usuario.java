@@ -29,5 +29,13 @@ public class Usuario {
     @NotBlank(message = "O nome não ser nulo ou vazio.")
     private String nome;
 
+//    @Column(name = "usuario")
+//    @NotBlank(message = "O usuario não ser nulo ou vazio.")
+//    private String usuario;
+//
+//    @Column(name = "senha")
+//    @NotBlank(message = "A senha não ser nulo ou vazio.")
+//    private String senha;
+
 }
 

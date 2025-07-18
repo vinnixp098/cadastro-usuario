@@ -4,10 +4,12 @@ import com.vinicius.cadastro_usuario.busines.dto.UsuarioDTO;
 import com.vinicius.cadastro_usuario.busines.interfaces.UsuarioInterface;
 import com.vinicius.cadastro_usuario.insfratructure.entitys.Usuario;
 import com.vinicius.cadastro_usuario.insfratructure.repository.UsuarioRepository;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,19 +23,25 @@ public class UsuarioService {
         this.repository = repository;
     }
 
-    public Boolean salvarUsuario(Usuario usuario){
+    public ResponseEntity<?> salvarUsuario(Usuario usuario){
 
-        Optional<UsuarioInterface> usuarioViewOptional = repository.findByCpf(usuario.getCpf());
-        if (usuarioViewOptional.isPresent()) {
-            return false;
-        }
-
-        repository.saveAndFlush(usuario);
-        return true;
+        return repository
+                .findByCpf(usuario.getCpf())
+                .map(user -> ResponseEntity.badRequest().body("Usuário já cadastrado!"))
+                .orElseGet(() -> {
+                    repository.save(usuario);
+                    return ResponseEntity.ok().build();
+                });
+//        Optional<UsuarioInterface> usuarioViewOptional = repository.findByCpf(usuario.getCpf());
+//        if (usuarioViewOptional.isPresent()) {
+//            return false;
+//        }
+//        repository.saveAndFlush(usuario);
+//        return true;
     }
 
     public Optional<UsuarioDTO> buscarUsuarioPorEmail(String email){
-        Optional<UsuarioInterface> usuarioViewOptional = repository.findByCpf(email);
+        Optional<UsuarioInterface> usuarioViewOptional = repository.findByEmail(email);
         if (usuarioViewOptional.isPresent()) {
             UsuarioInterface usuarioInterface = usuarioViewOptional.get();
             UsuarioDTO usuarioDTO = UsuarioDTO.builder()
@@ -47,7 +55,8 @@ public class UsuarioService {
         }
     }
 
-    public Optional<UsuarioDTO> buscarUsuarioPorCpf(String cpf){
+    public Optional<?> buscarUsuarioPorCpf(String cpf){
+
         Optional<UsuarioInterface> usuarioViewOptional = repository.findByCpf(cpf);
         if (usuarioViewOptional.isPresent()) {
             UsuarioInterface usuarioInterface = usuarioViewOptional.get();
@@ -79,6 +88,6 @@ public class UsuarioService {
                 .build();
 
         repository.saveAndFlush(usuarioAtualizdo);
-
     }
+    public record UsuarioResponse(String message, Object body) {}
 }
